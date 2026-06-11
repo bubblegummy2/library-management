@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Welcome | Library Management{% endblock %}
+{% block content %}
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Phase 1</p>
+      <h2>Search the catalog, sign in securely, and see what is available.</h2>
+      <p class="lead">
+        Students can register and browse books immediately. Librarians use their own role and cannot
+        access student-only catalog pages.
+      </p>
+      <div class="hero-actions">
+        <a class="primary" href="{{ url_for('register') }}">Create student account</a>
+        <a class="secondary" href="{{ url_for('login') }}">Log in</a>
+      </div>
+    </div>
+    <aside class="hero-panel">
+      <h3>Demo librarian account</h3>
+      <p><strong>Email:</strong> librarian@university.edu</p>
+      <p><strong>Password:</strong> librarian123</p>
+      <p class="muted">Use this to confirm role separation during testing.</p>
+    </aside>
+  </section>
+{% endblock %}
