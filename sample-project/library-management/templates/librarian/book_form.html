@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ form_title }} | Library Management{% endblock %}
+{% block content %}
+  <section class="card narrow">
+    <h2>{{ form_title }}</h2>
+    <p class="muted">Librarian access only.</p>
+    <form method="post" class="stack" action="{{ form_action }}">
+      <label>
+        Title
+        <input type="text" name="title" value="{{ book.title if book else '' }}" required />
+      </label>
+      <label>
+        Author
+        <input type="text" name="author" value="{{ book.author if book else '' }}" required />
+      </label>
+      <label>
+        ISBN
+        <input type="text" name="isbn" value="{{ book.isbn if book else '' }}" required />
+      </label>
+      <label>
+        Category
+        <select name="category_id" required>
+          <option value="">Select category</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if book and book.category_id == category.id %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Summary
+        <textarea name="summary" rows="5" required>{{ book.summary if book else '' }}</textarea>
+      </label>
+      <label>
+        Total copies
+        <input type="number" name="total_copies" min="1" value="{{ book.total_copies if book else 1 }}" required />
+      </label>
+      <label>
+        Available copies
+        <input type="number" name="available_copies" min="0" value="{{ book.available_copies if book else 1 }}" required />
+      </label>
+      <button type="submit" class="primary">{{ submit_label }}</button>
+    </form>
+  </section>
+{% endblock %}
