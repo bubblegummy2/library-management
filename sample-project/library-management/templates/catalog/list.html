@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Catalog | Library Management{% endblock %}
+{% block content %}
+  <section class="section-head">
+    <div>
+      <p class="eyebrow">Student catalog</p>
+      <h2>Browse and filter books</h2>
+      <p class="muted">Search by title, author, or ISBN and narrow the results by category or availability.</p>
+    </div>
+    {% if can_manage %}
+      <a class="primary" href="{{ url_for('librarian_book_create') }}">Add new book</a>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <form method="get" class="filters">
+      <label>
+        Search
+        <input type="search" name="q" value="{{ filters.q }}" placeholder="Title, author, ISBN" />
+      </label>
+      <label>
+        Category
+        <select name="category">
+          <option value="">All categories</option>
+          {% for category in categories %}
+            <option value="{{ category.name }}" {% if filters.category == category.name %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Availability
+        <select name="availability">
+          <option value="all" {% if filters.availability == 'all' %}selected{% endif %}>All books</option>
+          <option value="available" {% if filters.availability == 'available' %}selected{% endif %}>Available</option>
+          <option value="unavailable" {% if filters.availability == 'unavailable' %}selected{% endif %}>Unavailable</option>
+        </select>
+      </label>
+      <button type="submit" class="primary">Apply</button>
+    </form>
+  </section>
+
+  <section class="grid">
+    {% for book in books %}
+      <article class="book-card">
+        <p class="tag">{{ book.category.name }}</p>
+        <h3>{{ book.title }}</h3>
+        <p class="muted">{{ book.author }}</p>
+        <p>{{ book.availability_label }} · {{ book.available_copies }}/{{ book.total_copies }} copies</p>
+        <a href="{{ url_for('catalog_detail', book_id=book.id) }}">View details</a>
+      </article>
+    {% else %}
+      <article class="card empty">
+        <h3>No books matched your filters.</h3>
+        <p>Try a broader search or clear one of the filters.</p>
+      </article>
+    {% endfor %}
+  </section>
+{% endblock %}
