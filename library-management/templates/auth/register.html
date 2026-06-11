@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Register | Library Management{% endblock %}
+{% block content %}
+  <section class="card narrow">
+    <h2>Create student account</h2>
+    <form method="post" class="stack">
+      <label>
+        Full name
+        <input type="text" name="full_name" required autocomplete="name" />
+      </label>
+      <label>
+        Email
+        <input type="email" name="email" required autocomplete="email" />
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" required minlength="8" autocomplete="new-password" />
+      </label>
+      <button type="submit" class="primary">Register</button>
+    </form>
+  </section>
+{% endblock %}

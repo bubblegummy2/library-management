@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}My Borrowings | Library Management{% endblock %}
+{% block content %}
+  <section class="card">
+    <h2>Student dashboard</h2>
+    <p class="muted">Track your requests, active loans, and due dates here.</p>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Requests</p>
+        <h2>Your borrowing requests</h2>
+      </div>
+    </div>
+    <div class="grid">
+      {% for item in requests %}
+        <article class="book-card">
+          <p class="tag">{{ item.status|title }}</p>
+          <h3>{{ item.book.title }}</h3>
+          <p class="muted">{{ item.book.author }}</p>
+          <p>Requested {{ item.requested_at.strftime('%Y-%m-%d %H:%M') }}</p>
+        </article>
+      {% else %}
+        <article class="card empty">
+          <h3>No requests yet.</h3>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Loans</p>
+        <h2>Your active and past loans</h2>
+      </div>
+    </div>
+    <div class="grid">
+      {% for loan in loans %}
+        <article class="book-card">
+          <p class="tag {% if loan.is_overdue %}tag-danger{% endif %}">
+            {% if loan.returned_at %}
+              Returned
+            {% elif loan.is_overdue %}
+              Overdue
+            {% else %}
+              Active
+            {% endif %}
+          </p>
+          <h3>{{ loan.book.title }}</h3>
+          <p class="muted">{{ loan.book.author }}</p>
+          <p>Due {{ loan.due_date.strftime('%Y-%m-%d') }}</p>
+        </article>
+      {% else %}
+        <article class="card empty">
+          <h3>No loans yet.</h3>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

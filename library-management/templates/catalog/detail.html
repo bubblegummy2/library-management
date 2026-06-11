@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} | Library Management{% endblock %}
+{% block content %}
+  <section class="card detail">
+    <div class="detail-meta">
+      <p class="tag">{{ book.category.name }}</p>
+      <h2>{{ book.title }}</h2>
+      <p class="muted">by {{ book.author }}</p>
+    </div>
+    <dl class="facts">
+      <div><dt>ISBN</dt><dd>{{ book.isbn }}</dd></div>
+      <div><dt>Availability</dt><dd>{{ book.availability_label }}</dd></div>
+      <div><dt>Copies</dt><dd>{{ book.available_copies }} of {{ book.total_copies }}</dd></div>
+    </dl>
+    <p>{{ book.summary }}</p>
+    {% if current_user.is_authenticated and current_user.role == 'student' %}
+      <div class="detail-actions">
+        {% if active_loan %}
+          <p class="flash flash-warning">You already have an active loan for this book.</p>
+        {% elif pending_request %}
+          <p class="flash flash-warning">You already have a pending request for this book.</p>
+        {% elif book.is_available %}
+          <form method="post" action="{{ url_for('request_book', book_id=book.id) }}">
+            <button type="submit" class="primary">Request this book</button>
+          </form>
+        {% else %}
+          <p class="flash flash-warning">This book is currently unavailable.</p>
+        {% endif %}
+      </div>
+    {% elif current_user.is_authenticated and current_user.role == 'librarian' %}
+      <div class="detail-actions">
+        <a class="primary" href="{{ url_for('librarian_book_edit', book_id=book.id) }}">Edit book</a>
+        <form method="post" action="{{ url_for('librarian_book_delete', book_id=book.id) }}">
+          <button type="submit" class="secondary">Delete book</button>
+        </form>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

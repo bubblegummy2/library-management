@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Library Management{% endblock %}
+{% block content %}
+  <section class="card">
+    <h2>Librarian dashboard</h2>
+    <p>
+      You are signed in as <strong>{{ current_user.full_name }}</strong> with the <strong>{{ current_user.role }}</strong> role.
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <span>Total books</span>
+        <strong>{{ total_books }}</strong>
+      </div>
+      <div class="stat">
+        <span>Available books</span>
+        <strong>{{ available_books }}</strong>
+      </div>
+      <div class="stat">
+        <span>Pending requests</span>
+        <strong>{{ pending_requests|length }}</strong>
+      </div>
+      <div class="stat">
+        <span>Overdue loans</span>
+        <strong>{{ overdue_loans|length }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Recently added</p>
+        <h2>Latest books in the catalog</h2>
+      </div>
+      <a class="primary" href="{{ url_for('librarian_book_create') }}">Add new book</a>
+    </div>
+
+    <div class="grid">
+      {% for book in books %}
+        <article class="book-card">
+          <p class="tag">{{ book.category.name }}</p>
+          <h3>{{ book.title }}</h3>
+          <p class="muted">{{ book.author }}</p>
+          <p>{{ book.availability_label }} · {{ book.available_copies }}/{{ book.total_copies }} copies</p>
+          <a href="{{ url_for('catalog_detail', book_id=book.id) }}">View details</a>
+          <div class="detail-actions">
+            <a class="secondary" href="{{ url_for('librarian_book_edit', book_id=book.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('librarian_book_delete', book_id=book.id) }}">
+              <button type="submit" class="secondary">Delete</button>
+            </form>
+          </div>
+        </article>
+      {% else %}
+        <article class="card empty">
+          <h3>No books yet.</h3>
+          <p>Use Add new book to put the first title into the catalog.</p>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Requests</p>
+        <h2>Pending borrowing requests</h2>
+      </div>
+    </div>
+    <div class="grid">
+      {% for item in pending_requests %}
+        <article class="book-card">
+          <p class="tag">Pending</p>
+          <h3>{{ item.book.title }}</h3>
+          <p class="muted">{{ item.user.full_name }} · {{ item.user.email }}</p>
+          <p>Requested {{ item.requested_at.strftime('%Y-%m-%d %H:%M') }}</p>
+          <div class="detail-actions">
+            <form method="post" action="{{ url_for('approve_request', request_id=item.id) }}">
+              <button type="submit" class="primary">Approve</button>
+            </form>
+            <form method="post" action="{{ url_for('reject_request', request_id=item.id) }}">
+              <button type="submit" class="secondary">Reject</button>
+            </form>
+          </div>
+        </article>
+      {% else %}
+        <article class="card empty">
+          <h3>No pending requests.</h3>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Loans</p>
+        <h2>Active and overdue loans</h2>
+      </div>
+    </div>
+    <div class="grid">
+      {% for loan in active_loans %}
+        <article class="book-card">
+          <p class="tag {% if loan.is_overdue %}tag-danger{% endif %}">
+            {% if loan.is_overdue %}
+              Overdue
+            {% else %}
+              Active
+            {% endif %}
+          </p>
+          <h3>{{ loan.book.title }}</h3>
+          <p class="muted">{{ loan.user.full_name }} · {{ loan.user.email }}</p>
+          <p>Due {{ loan.due_date.strftime('%Y-%m-%d') }}</p>
+          <div class="detail-actions">
+            <form method="post" action="{{ url_for('return_loan', loan_id=loan.id) }}">
+              <button type="submit" class="primary">Record return</button>
+            </form>
+          </div>
+        </article>
+      {% else %}
+        <article class="card empty">
+          <h3>No active loans.</h3>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
